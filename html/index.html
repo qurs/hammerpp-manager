@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Hammer++ Manager</title>
+	<link rel="stylesheet" type="text/css" href="style.css"/>
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+	<div class="titlebar">
+		<span class="titlebar__title">Hammer++ Manager</span>
+	</div>
+
+	<form class="config">
+		<h3 class="config__pathto__header">
+			Настройка путей
+		</h3>
+		<input class="config__pathto" id="gmod_path" placeholder="Путь до папки GarrysMod">
+
+		<p>
+			<input class="config__save_button" id="save_config" type="submit" value="Сохранить">
+		</p>
+	</form>
+
+	<form class="content">
+		<h3 class="content__header">
+			Контент
+		</h3>
+
+		<div class="content__list" id="content_list">
+		</div>
+
+		<input class="content__newcontent_button" id="new_content" type="submit" value="Добавить">
+	</form>
+
+	<form class="start">
+		<input class="start__button" id="start_button" type="submit" value="Запустить Hammer++">
+	</form>
+
+	<div class="error" id="error">
+	</div>
+
+	<script src="script.js"></script>
+</body>
+</html>
