@@ -26,9 +26,9 @@ const unzipUpdate = (zipDir) => {
 const downloadUpdate = async (url) => {
 	return new Promise((resolve, reject) => {
 		const _path = path.join(__dirname, '_update', 'update.zip')
-		console.log(url)
 	
 		const urlData = new URL(url)
+		if (!urlData) return reject()
 
 		if (fs.existsSync(_path)) {
 			fs.rmSync(_path, {force: true})
@@ -59,6 +59,8 @@ exports.checkUpdate = repoName => {
 	return new Promise(async (resolve, reject) => {
 		const res = await fetch(`https://api.github.com/repos/qurs/${repoName}/releases/latest`)
 		const data = await res.json()
+
+		if (!data || !data.zipball_url) return reject()
 		
 		const package = require('./package.json')
 		if (data.tag_name != package.version) {

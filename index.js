@@ -145,6 +145,9 @@ app.whenReady().then(() => {
 		else {
 			createLoadingWindow()
 		}
+	}).catch(() => {
+		createWindow()
+		dialog.showErrorBox('Ошибка с обновлением', 'Кажется, на твоей версии невозможно автообновление! Скачай последнюю версию с Github')
 	})
 
 	app.on('activate', () => {
