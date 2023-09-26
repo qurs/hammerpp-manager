@@ -1,15 +1,19 @@
-const fetch = require('node-fetch')
 const http = require('follow-redirects').https
-const zip = require('zip-lib')
+const extract = require('extract-zip')
 const fs = require('fs')
 const path = require('path')
-const { app } = require('electron')
+const { app, dialog } = require('electron')
 
 const unzipUpdate = (zipDir) => {
 	return new Promise((resolve, reject) => {
-		zip.extract(zipDir, '_update').then(() => {
-			fs.rm(zipDir, resolve)
-		}).catch(reject)
+		process.noAsar = true
+		extract(zipDir, { dir: path.join(process.cwd(), '_update') }).then(() => {
+			process.noAsar = false
+			fs.rm(zipDir, {force: true}, resolve)
+		}).catch(err => {
+			process.noAsar = false
+			reject(err)
+		})
 	})
 }
 
@@ -56,22 +60,27 @@ exports.checkUpdate = repoName => {
 		const package = require('./package.json')
 		if (data.tag_name != package.version) {
 			console.log('UPDATE IS REQUIRED!')
-	
-			try {
-				fs.mkdirSync( path.join(process.cwd(), '_update'), {force: true} )
-			} catch (error) {}
-	
-			downloadUpdate(repoName).then(_path => {
-				unzipUpdate(_path).then(() => {
-					fs.cpSync( path.join(process.cwd(), '_update'), path.join(process.cwd()), {recursive: true, force: true} )
-					fs.rmSync( path.join(process.cwd(), '_update'), {recursive: true, force: true} )
+			dialog.showErrorBox('Обновление', `Доступно новое обновление ${data.tag_name}! Скачайте по следующей ссылке: https://github.com/qurs/hammerpp-manager/releases/latest`)
 
-					app.relaunch()
-					app.exit(0)
-				})
-			})
+			resolve(false)
+	
+			// try {
+			// 	fs.mkdirSync( path.join(process.cwd(), '_update'), {force: true} )
+			// } catch (error) {}
+	
+			// downloadUpdate(repoName).then(_path => {
+			// 	unzipUpdate(_path).then(() => {
+			// 		app.relaunch()
+			// 		app.exit(0)
 
-			resolve(true)
+			// 		fs.cpSync( path.join(process.cwd(), '_update'), path.join(process.cwd()), {recursive: true, force: true} )
+			// 		fs.rmSync( path.join(process.cwd(), '_update'), {recursive: true, force: true} )
+			// 	}).catch(err => {
+			// 		dialog.showErrorBox('Распаковка', 'При распаковке обновления произошла ошибка! ' + err)
+			// 	})
+			// })
+
+			// resolve(true)
 		}
 		else {
 			resolve(false)
