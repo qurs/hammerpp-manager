@@ -8,25 +8,16 @@ const { app } = require('electron')
 const unzipUpdate = (zipDir) => {
 	return new Promise((resolve, reject) => {
 		zip.extract(zipDir, '_update').then(() => {
-			const _dirs = fs.readdirSync( path.join(__dirname, '_update') )
-			const root = _dirs[0]
-			if (!root) return reject()
-		
-			const files = fs.readdirSync( path.join(__dirname, '_update', root) )
-			files.forEach(fileName => {
-				fs.cpSync( path.join(__dirname, '_update', root, fileName), path.join(__dirname, '_update', fileName), {recursive: true, force: true} )
-			})
-		
-			fs.rmSync( path.join(__dirname, '_update', root), {recursive: true, force: true} )
-			fs.rm( zipDir, resolve)
-		})
+			fs.rm(zipDir, resolve)
+		}).catch(reject)
 	})
 }
 
-const downloadUpdate = async (url) => {
+const downloadUpdate = async (repoName) => {
 	return new Promise((resolve, reject) => {
-		const _path = path.join(__dirname, '_update', 'update.zip')
+		const _path = path.join('.', '_update', 'update.zip')
 	
+		const url = `https://github.com/qurs/${repoName}/releases/download/latest/HammerPlusPlus-Manager.zip`
 		const urlData = new URL(url)
 		if (!urlData) return reject()
 
@@ -67,13 +58,13 @@ exports.checkUpdate = repoName => {
 			console.log('UPDATE IS REQUIRED!')
 	
 			try {
-				fs.mkdirSync( path.join(__dirname, '_update'), {force: true} )
+				fs.mkdirSync( path.join('.', '_update'), {force: true} )
 			} catch (error) {}
 	
-			downloadUpdate(data.zipball_url).then(_path => {
+			downloadUpdate(repoName).then(_path => {
 				unzipUpdate(_path).then(() => {
-					fs.cpSync( path.join(__dirname, '_update'), path.join(__dirname), {recursive: true, force: true} )
-					fs.rmSync( path.join(__dirname, '_update'), {recursive: true, force: true} )
+					fs.cpSync( path.join('.', '_update'), path.join('.'), {recursive: true, force: true} )
+					fs.rmSync( path.join('.', '_update'), {recursive: true, force: true} )
 
 					app.relaunch()
 					app.exit(0)
