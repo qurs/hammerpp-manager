@@ -17,7 +17,7 @@ const downloadUpdate = async (repoName) => {
 	return new Promise((resolve, reject) => {
 		const _path = path.join('.', '_update', 'update.zip')
 	
-		const url = `https://github.com/qurs/${repoName}/releases/download/latest/HammerPlusPlus-Manager.zip`
+		const url = `https://github.com/qurs/${repoName}/releases/latest/download/hammerplusplus-manager.zip`
 		const urlData = new URL(url)
 		if (!urlData) return reject()
 
