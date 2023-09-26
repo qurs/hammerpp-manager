@@ -6,6 +6,7 @@ const Store = require('electron-store')
 const { content } = require('./content')
 const { config } = require('./config')
 const autoupdate = require('./autoupdate')
+const hammercontent = require('./hammercontent')
 
 const store = new Store()
 
@@ -138,16 +139,27 @@ app.whenReady().then(() => {
 	content.load(store)
 	config.load(store)
 
-	autoupdate.checkUpdate('hammerpp-manager').then(need => {
-		if (!need) {
-			createWindow()
-		}
-		else {
+	// autoupdate.checkUpdate('hammerpp-manager').then(need => {
+	// 	if (!need) {
+	// 		createWindow()
+	// 	}
+	// 	else {
+	// 		createLoadingWindow()
+	// 	}
+	// }).catch(() => {
+	// 	createWindow()
+	// 	dialog.showErrorBox('Ошибка с обновлением', 'Кажется, на твоей версии невозможно автообновление! Скачай последнюю версию с Github')
+	// })
+
+	autoupdate.checkUpdate('hammerpp-manager')
+
+	hammercontent.check().then(downloading => {
+		if (downloading) {
 			createLoadingWindow()
 		}
-	}).catch(() => {
-		createWindow()
-		dialog.showErrorBox('Ошибка с обновлением', 'Кажется, на твоей версии невозможно автообновление! Скачай последнюю версию с Github')
+		else {
+			createWindow()
+		}
 	})
 
 	app.on('activate', () => {
