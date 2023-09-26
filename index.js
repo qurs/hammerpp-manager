@@ -5,6 +5,7 @@ const cp = require('child_process')
 const Store = require('electron-store')
 const { content } = require('./content')
 const { config } = require('./config')
+const autoupdate = require('./autoupdate')
 
 const store = new Store()
 
@@ -94,7 +95,7 @@ const mountCfg = `
 
 let notify
 
-function createWindow () {
+const createWindow = () => {
 	const win = new BrowserWindow({
 		titleBarStyle: 'hidden',
 		titleBarOverlay: {
@@ -114,10 +115,37 @@ function createWindow () {
 	win.loadFile('html/index.html')
 }
 
+const createLoadingWindow = () => {
+	const win = new BrowserWindow({
+		titleBarStyle: 'hidden',
+		titleBarOverlay: {
+			color: '#303030',
+			symbolColor: '#dddddd',
+			height: 32,
+		},
+		width: 800,
+		height: 600,
+		webPreferences: {
+			contextIsolation: true,
+		},
+		icon: 'icons/app.png',
+	})
+  
+	win.loadFile('html/loading.html')
+}
+
 app.whenReady().then(() => {
 	content.load(store)
 	config.load(store)
-	createWindow()
+
+	autoupdate.checkUpdate('hammerpp-manager').then(need => {
+		if (!need) {
+			createWindow()
+		}
+		else {
+			createLoadingWindow()
+		}
+	})
 
 	app.on('activate', () => {
 		if (BrowserWindow.getAllWindows().length === 0) {
@@ -207,4 +235,8 @@ ipcMain.handle('get_error', () => {
 	notify = null
 
 	return val
+})
+
+ipcMain.handle('get_version', () => {
+	return require('./package.json').version
 })

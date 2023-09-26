@@ -92,6 +92,13 @@ const saveConfig = () => {
 	ipcRenderer.invoke('config.save', paths)
 }
 
+const setVersion = (version) => {
+	const el = document.getElementById('version')
+	if (!el) return
+
+	el.innerText = version
+}
+
 contextBridge.exposeInMainWorld('content', {
 	add: addNewContent,
 	remove: removeContent,
@@ -118,5 +125,9 @@ window.addEventListener('DOMContentLoaded', () => {
 	ipcRenderer.invoke('get_error').then(err => {
 		if (!err) return
 		notify(err)
+	})
+
+	ipcRenderer.invoke('get_version').then(version => {
+		setVersion(version)
 	})
 })

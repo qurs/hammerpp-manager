@@ -2,16 +2,19 @@
   "name": "hammerplusplus_manager",
   "author": "qurs",
   "description": "Hammer++ Manager",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
-    "electron-store": "^8.1.0"
+    "electron-store": "^8.1.0",
+    "follow-redirects": "^1.15.3",
+    "zip-lib": "^0.7.3"
   },
   "main": "./index.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "default-start": "electron ."
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.4.2",
