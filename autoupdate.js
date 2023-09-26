@@ -15,9 +15,9 @@ const unzipUpdate = (zipDir) => {
 
 const downloadUpdate = async (repoName) => {
 	return new Promise((resolve, reject) => {
-		const _path = path.join('.', '_update', 'update.zip')
+		const _path = path.join(process.cwd(), '_update', 'update.zip')
 	
-		const url = `https://github.com/qurs/${repoName}/releases/latest/download/hammerplusplus-manager.zip`
+		const url = `https://github.com/qurs/${repoName}/releases/latest/download/HammerPlusPlus-Manager.zip`
 		const urlData = new URL(url)
 		if (!urlData) return reject()
 
@@ -58,13 +58,13 @@ exports.checkUpdate = repoName => {
 			console.log('UPDATE IS REQUIRED!')
 	
 			try {
-				fs.mkdirSync( path.join('.', '_update'), {force: true} )
+				fs.mkdirSync( path.join(process.cwd(), '_update'), {force: true} )
 			} catch (error) {}
 	
 			downloadUpdate(repoName).then(_path => {
 				unzipUpdate(_path).then(() => {
-					fs.cpSync( path.join('.', '_update'), path.join('.'), {recursive: true, force: true} )
-					fs.rmSync( path.join('.', '_update'), {recursive: true, force: true} )
+					fs.cpSync( path.join(process.cwd(), '_update'), path.join(process.cwd()), {recursive: true, force: true} )
+					fs.rmSync( path.join(process.cwd(), '_update'), {recursive: true, force: true} )
 
 					app.relaunch()
 					app.exit(0)
