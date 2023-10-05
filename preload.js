@@ -20,13 +20,19 @@ const start = () => {
 	ipcRenderer.invoke('start')
 }
 
-const addContentItem = (_path, index) => {
+const addContentItem = (_path, isEnabled, index) => {
 	const contentList = document.getElementById('content_list')
+
+	let checked = 'checked'
+	if (!isEnabled) {
+		checked = ''
+	}
 
 	const item = document.createElement('div')
 	item.className = 'content__list__item'
 	item.innerHTML = `
 		<div class="content__list__item">
+			<input class="content__newcontent_toggle" id="toggle_content_${index}" type="checkbox" ${checked} onclick="toggleContent(this)">
 			<input class="content__pathto" id="content_${index}" placeholder="Путь до файла .vpk (если есть)" value="${_path}">
 			<input class="content__newcontent_button" id="save_content_${index}" type="submit" value="Сохранить" onclick="saveContent(this)">
 			<input class="content__newcontent_button" id="delete_content_${index}" type="submit" value="Удалить" onclick="removeContent(this)">
@@ -37,8 +43,8 @@ const addContentItem = (_path, index) => {
 }
 
 const loadContentList = content => {
-	content.forEach((_path, i) => {
-		addContentItem(_path, i)
+	content.forEach((el, i) => {
+		addContentItem(el[0], el[1], i)
 	})
 }
 
@@ -81,6 +87,15 @@ const saveContent = (id, path) => {
 	ipcRenderer.invoke('content.set', parseInt(found[0]), path)
 }
 
+const toggleContent = (id, b) => {
+	if (!id) return
+
+	const found = id.match('[\\d]+')
+	if (!found || !found[0]) return
+
+	ipcRenderer.invoke('content.toggle', parseInt(found[0]), b)
+}
+
 const saveConfig = () => {
 	let paths = {}
 
@@ -103,6 +118,7 @@ contextBridge.exposeInMainWorld('content', {
 	add: addNewContent,
 	remove: removeContent,
 	save: saveContent,
+	toggle: toggleContent,
 })
 
 contextBridge.exposeInMainWorld('config', {

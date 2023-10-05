@@ -29,3 +29,12 @@ const saveContent = (el) => {
 
 	window.content.save(el.id, entry.value)
 }
+
+const toggleContent = (el) => {
+	const found = el.id.match('[\\d]+')
+	if (!found || !found[0]) return
+
+	const id = found[0]
+
+	window.content.toggle(el.id, el.checked)
+}

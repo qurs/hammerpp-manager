@@ -202,6 +202,12 @@ ipcMain.handle('config.save', (_, paths) => {
 	}
 })
 
+ipcMain.handle('content.toggle', (_, index, b) => {
+	if (index == null || index == undefined) return
+
+	content.toggle(store, index, b)
+})
+
 ipcMain.handle('content.fetch', () => {
 	return content.getAll()
 })
@@ -220,18 +226,24 @@ ipcMain.handle('start', () => {
 	let pathsStr = ''
 	let mountCfgStr = ''
 
-	content.getAll().forEach((_path, i) => {
+	content.getAll().forEach((el, i) => {
+		let _path = el[0]
 		if (!_path) return
+
+		let disabled = '//'
+		if (content.isEnabled(i)) {
+			disabled = ''
+		}
 
 		const pathWithoutVPK = _path.match('.+(?=\\\\.+\\.vpk)')
 		if (pathWithoutVPK && pathWithoutVPK[0]) {
-			mountCfgStr += `"${i}" "${pathWithoutVPK[0]}"\n	`
+			mountCfgStr += `${disabled}"${i}" "${pathWithoutVPK[0]}"\n	`
 		}
 		else {
-			mountCfgStr += `"${i}" "${_path}"\n	`
+			mountCfgStr += `${disabled}"${i}" "${_path}"\n	`
 		}
 
-		pathsStr += `game "${_path}"\n			`
+		pathsStr += `${disabled}game "${_path}"\n			`
 	})
 
 	const newGameInfo = gameInfo.replaceAll('!contents!', pathsStr)
