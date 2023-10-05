@@ -22,6 +22,7 @@ const hammerConfig = `
 			{
 				"GameData0"		"${ path.join('!gmod_dir!', 'bin', 'garrysmod.fgd') }"
 				"GameData1"		"${ path.join(process.cwd(), 'hammer++', 'bin', 'hammerplusplus', 'hammerplusplus_fgd.fgd') }"
+				"GameData2"		"${ path.join(process.cwd(), 'hammer++', 'bin', 'propper.fgd') }"
 				"TextureFormat"	"5"
 				"MapFormat"		"4"
 				"DefaultTextureScale"	"0.250000"
